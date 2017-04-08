@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<form:form name="personDto" action="/home.do" modelAttribute="personDto" method="post">
+	<form:form action="/home.do" modelAttribute="personDto" method="post">
 		아이디 : <input type="text" name="name"/>
 		<form:errors path="name" />
 		<input type="submit" id="btn" value="로그인">

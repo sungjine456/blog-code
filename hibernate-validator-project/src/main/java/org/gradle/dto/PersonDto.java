@@ -3,7 +3,7 @@ package org.gradle.dto;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class PersonDto {
-	@NotEmpty(message="빈값이면 안됩니다.")
+	@NotEmpty
     private String name;
 	
     public String getName() {
