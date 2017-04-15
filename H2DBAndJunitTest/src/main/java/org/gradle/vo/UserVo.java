@@ -1,5 +1,8 @@
 package org.gradle.vo;
 
+import org.apache.ibatis.type.Alias;
+
+@Alias("userVo")
 public class UserVo {
 	private long id;
     private String name;

@@ -37,20 +37,21 @@ public class AppConfig {
 	}
 	
 	@Bean
-    public PlatformTransactionManager transactionManager(DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
+    public PlatformTransactionManager transactionManager() {
+        return new DataSourceTransactionManager(dataSource());
     }
 	
 	@Bean
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+    public SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
-        sessionFactory.setDataSource(dataSource);
+        sessionFactory.setDataSource(dataSource());
+        sessionFactory.setTypeAliasesPackage("org.gradle.vo");
         sessionFactory.setMapperLocations(applicationContext.getResources("classpath:sql/*.xml"));
         return (SqlSessionFactory)sessionFactory.getObject();
     }
 	
 	@Bean
 	public SqlSession session() throws Exception {
-		return new SqlSessionTemplate(sqlSessionFactory(dataSource()));
+		return new SqlSessionTemplate(sqlSessionFactory());
 	}
 }
