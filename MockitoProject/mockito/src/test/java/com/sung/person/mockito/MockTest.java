@@ -1,7 +1,7 @@
 package com.sung.person.mockito;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atLeastOnce;
@@ -26,43 +26,50 @@ public class MockTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void verifyTest() {
-		List<String> testMock = mock(ArrayList.class);
-		testMock.add("1");
-		testMock.add("2");
-		testMock.add("3");
+		List<String> testMockList = mock(ArrayList.class);
+		testMockList.add("1");
+		testMockList.add("2");
+		testMockList.add("3");
+		testMockList.add("3");
 		
-		verify(testMock, atLeastOnce()).add(anyString());
-		verify(testMock, atLeast(3)).add(anyString());
-		verify(testMock, atMost(3)).add(anyString());
-		verify(testMock, times(3)).add(anyString());
+		verify(testMockList, atLeastOnce()).add("1");      // 적어도 한번 호출되었는지
+		verify(testMockList, atLeast(2)).add("3");         // n번 째 호출이 있었는지
+		verify(testMockList, atMost(4)).add(anyString());  // 최대 호출 
+		verify(testMockList, atMost(4)).add("123");        // add의 파라미터는 무엇이 되도 상관없다
+		
+		verify(testMockList, times(1)).add("1");
+		verify(testMockList, times(2)).add("3");
+		verify(testMockList, times(4)).add(anyString());      // 동일한 값이 몇번 호출 됐는지
 
-		verify(testMock, times(1)).add("1");
-		verify(testMock, times(1)).add("2");
-		verify(testMock, times(1)).add("3");
-
-		verify(testMock, never()).add("4");
+		verify(testMockList, never()).add("4");  // times(0)과 같다
+		verify(testMockList, times(0)).add("4");
+		
+		assertNull("1", testMockList.get(0)); // get 메소드는 정의하지않아서 Null이다.
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void whenThenTest() {
-		Map<String, String> testMock = mock(Map.class);
+		Map<String, String> testMockMap = mock(Map.class);
 
-		when(testMock.get("id")).thenReturn("id");
-		when(testMock.get("pw")).thenReturn("pw");
+		when(testMockMap.get("id")).thenReturn("id");
+		when(testMockMap.get("pw")).thenReturn("pw");
+		
+		verify(testMockMap).get("id");
+		verify(testMockMap).get("pw");
 
-		assertThat("id", is(testMock.get("id")));
-		assertThat("pw", is(testMock.get("pw")));
+		assertThat("id", is(testMockMap.get("id")));
+		assertThat("pw", is(testMockMap.get("pw")));
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Test(expected=RuntimeException.class)
 	public void throwExceptionTest() {
-		Map<String, String> testMock = mock(Map.class);
+		Map<String, String> testMockMap = mock(Map.class);
 
-		when(testMock.get("name4")).thenThrow(new RuntimeException());
+		when(testMockMap.get("name4")).thenThrow(new RuntimeException());
 		
-		testMock.get("name4");
+		testMockMap.get("name4");
 	}
 	
 	/**
@@ -71,30 +78,32 @@ public class MockTest {
 	 */
 	@Test
 	public void answerTest(){
-		UserDao mockUser = mock(UserDao.class);
+		UserDao testMockUser = mock(UserDao.class);
 		
-		when(mockUser.findUser("em")).thenAnswer(new Answer<User>() {
+		when(testMockUser.findUser("em")).thenAnswer(new Answer<User>() {
 			public User answer(InvocationOnMock invocation) throws Throwable {
 				return new User("nm", "email");
 			}
 		});
 		
-		User user = mockUser.findUser("em");
+		User user = testMockUser.findUser("em");
 		assertThat("nm", is(user.getName()));
 		assertThat("email", is(user.getEmail()));
 	}
 	
+	// Spy는 실제 메소드를 호출한다.
 	@Test
 	public void spyTest(){
 		List<Integer> list = new ArrayList<>();
 		List<Integer> spy = Mockito.spy(list);
 
-		when(spy.size()).thenReturn(100); // stubbing
-
-		assertThat(spy.size(), is(100));
+		when(spy.size()).thenReturn(100);
 
 		spy.add(1);
 		spy.add(2);
+
+		assertEquals(spy.size(), 100);
+		assertThat(spy.get(0), is(1));
 
 		verify(spy).add(1);
 		verify(spy).add(2);
