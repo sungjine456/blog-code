@@ -55,8 +55,7 @@ public class MockTest {
 		when(testMockMap.get("id")).thenReturn("id");
 		when(testMockMap.get("pw")).thenReturn("pw");
 		
-		verify(testMockMap).get("id");
-		verify(testMockMap).get("pw");
+		verify(testMockMap, atMost(2)).get(anyString());
 
 		assertThat("id", is(testMockMap.get("id")));
 		assertThat("pw", is(testMockMap.get("pw")));
