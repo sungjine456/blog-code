@@ -1,7 +1,9 @@
 package com.sung.person.mockito;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atLeastOnce;
@@ -23,6 +25,9 @@ import org.mockito.stubbing.Answer;
 
 public class MockTest {
 
+	/**
+	 * verify 메소드를 목 객체만 넣어서 호출한다면 verify(mockObject, times(1)) 과 같다.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void verifyTest() {
@@ -51,14 +56,27 @@ public class MockTest {
 	@Test
 	public void whenThenTest() {
 		Map<String, String> testMockMap = mock(Map.class);
-
+		
 		when(testMockMap.get("id")).thenReturn("id");
 		when(testMockMap.get("pw")).thenReturn("pw");
 		
 		verify(testMockMap, atMost(2)).get(anyString());
-
+		
 		assertThat("id", is(testMockMap.get("id")));
 		assertThat("pw", is(testMockMap.get("pw")));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void whenThenVerifyException(){
+		List<Integer> testMockList = mock(ArrayList.class);
+		testMockList.add(1);
+		when(testMockList.size()).thenReturn(100);
+		
+		verify(testMockList).add(1);
+//		verify(testMockList).size();  testMockList로 size메소드를 호출한 적이 없기 때문에 에러가 난다.
+		assertEquals(100, testMockList.size());
+		verify(testMockList).size();  // size메소드를 호출한 적이 있기 때문에 에러가 나지 않는다.
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -84,7 +102,7 @@ public class MockTest {
 				return new User("nm", "email");
 			}
 		});
-		
+	    
 		User user = testMockUser.findUser("em");
 		assertThat("nm", is(user.getName()));
 		assertThat("email", is(user.getEmail()));
