@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -106,23 +105,5 @@ public class MockTest {
 		User user = testMockUser.findUser("em");
 		assertThat("nm", is(user.getName()));
 		assertThat("email", is(user.getEmail()));
-	}
-	
-	// Spy는 실제 메소드를 호출한다.
-	@Test
-	public void spyTest(){
-		List<Integer> list = new ArrayList<>();
-		List<Integer> spy = Mockito.spy(list);
-
-		when(spy.size()).thenReturn(100);
-
-		spy.add(1);
-		spy.add(2);
-
-		assertEquals(spy.size(), 100);
-		assertThat(spy.get(0), is(1));
-
-		verify(spy).add(1);
-		verify(spy).add(2);
 	}
 }
